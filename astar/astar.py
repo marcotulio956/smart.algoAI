@@ -12,17 +12,20 @@ def solve(start, end, h, graph):
 	f[end]=g[end]=0
 	for ele in [node for node in graph.keys()]:
 		g[ele] = 0
-	# while(len(schedule)!=0):
-	for it in range(0,10):
+	it = 0
+	while(len(schedule)!=0):
+	# for it in range(0,10):
 		print("IT ",it," --")
+		it+=1
 		# known.update(set(graph[node].keys()))
 		# print(f"known:{known}")
 		print(f"f:{f}")
 		print(f"g:{g}")
-		node = schedule.pop()
+		node = schedule[0]
 		for evalf in schedule:
 			if f[evalf] < f[node]:
 				node = evalf 
+		schedule.remove(node)
 		visited.append(node)
 		print(f"node:{node}")
 		print(f"expan:{graph[node]}")
@@ -32,8 +35,8 @@ def solve(start, end, h, graph):
 			print("end\nPATH:")
 			previousnode = end
 			backtrack = [previousnode]
-			# while(previousnode != start):
-			for i in range(0,5):
+			while(previousnode != start):
+			# for i in range(0,5):
 				print("pn",previousnode)
 				for previous in graph[previousnode]:
 					print("\tp",previous)
