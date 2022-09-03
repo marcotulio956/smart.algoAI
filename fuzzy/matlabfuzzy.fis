@@ -1,0 +1,38 @@
+[System]
+Name='matlabfuzzy'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=0
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='velocidade'
+Range=[40 120]
+NumMFs=3
+MF1='mf1':'trimf',[6.667 40 73.33]
+MF2='mf2':'trimf',[46.67 80 113.3]
+MF3='mf3':'trimf',[86.67 120 153.3]
+
+[Input2]
+Name='distancia'
+Range=[1 100]
+NumMFs=3
+MF1='mf1':'trimf',[-40.25 1 42.25]
+MF2='mf2':'trimf',[9.25 50.5 91.75]
+MF3='mf3':'trimf',[58.75 100 141.2]
+
+[Output1]
+Name='frenagem'
+Range=[0 2]
+NumMFs=3
+MF1='mf1':'trimf',[-0.8333 0 0.8333]
+MF2='mf2':'trimf',[0.1667 1 1.833]
+MF3='mf3':'trimf',[1.167 2 2.833]
+
+[Rules]
