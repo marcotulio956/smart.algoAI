@@ -1,0 +1,38 @@
+[System]
+Name='seguro_carro'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=3
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='preco'
+Range=[0 25000]
+NumMFs=2
+MF1='barato':'trimf',[0 0 25000]
+MF2='caro':'trimf',[0 25000 25000]
+
+[Input2]
+Name='namassados'
+Range=[0 8]
+NumMFs=2
+MF1='muitos':'trapmf',[2 7 8 8]
+MF2='poucos':'trapmf',[0 0 2 7]
+
+[Output1]
+Name='seguro'
+Range=[50 600]
+NumMFs=2
+MF1='alto':'trapmf',[70 500 600 600]
+MF2='baixo':'trapmf',[0 0 70 500]
+
+[Rules]
+2 2, 1 (1) : 1
+1 2, 2 (1) : 1
+1 1, 1 (1) : 1
