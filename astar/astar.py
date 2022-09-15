@@ -2,7 +2,11 @@ import csv
 import math
 import sys
 
-def solve(start, end, h, graph):
+def solve(start, end, h, d):
+	if(start not in list(d.keys()) or end not in list(d.keys())):
+		print(f"Error: Start:{start} or End:{end} node doesn't exist in nodes:{list(d.keys())}")
+		return None
+
 	print(f"{start}->{end}")
 	visited = [] # closed list
 	schedule = [start] # open list
@@ -10,14 +14,14 @@ def solve(start, end, h, graph):
 	g = dict()
 	f[start]=g[start]=0
 	f[end]=g[end]=0
-	for ele in [node for node in graph.keys()]:
+	for ele in [node for node in d.keys()]:
 		g[ele] = 0
 	it = 0
 	while(len(schedule)!=0):
 	# for it in range(0,10):
 		print("IT ",it," --")
 		it+=1
-		# known.update(set(graph[node].keys()))
+		# known.update(set(d[node].keys()))
 		# print(f"known:{known}")
 		print(f"f:{f}")
 		print(f"g:{g}")
@@ -28,7 +32,7 @@ def solve(start, end, h, graph):
 		schedule.remove(node)
 		visited.append(node)
 		print(f"node:{node}")
-		print(f"expan:{graph[node]}")
+		print(f"expan:{d[node]}")
 		print(f"visited:{visited}")
 
 		if(node == end):
@@ -38,7 +42,7 @@ def solve(start, end, h, graph):
 			while(previousnode != start):
 			# for i in range(0,5):
 				print("pn",previousnode)
-				for previous in graph[previousnode]:
+				for previous in d[previousnode]:
 					print("\tp",previous)
 					if previous in visited and not previous in backtrack:
 						previousnode = previous
@@ -49,14 +53,15 @@ def solve(start, end, h, graph):
 						continue
 			return backtrack[::-1]
 		
-		for evaln in graph[node]:
+		for evaln in d[node]:
 			print(f"evaln:{evaln}")
 			if evaln in visited:
 				continue
-			g[evaln] = g[node] + graph[node][evaln]
+			g[evaln] = g[node] + d[node][evaln]
 			f[evaln] = g[evaln]
 			if (evaln!=end):
-				f[evaln] +=h[evaln][end]
+				estimative = h[evaln][end]
+				f[evaln] += estimative
 				print(f"\tf({evaln}) = {g[evaln]} g + {h[evaln][end]} h")
 			print(f"\tf({evaln}) = {f[evaln]}")
 			if True in [snode == evaln and g[evaln] > g[snode] for snode in schedule]:
@@ -76,21 +81,24 @@ def main(argv):
 	if (sys.argv[2]):
 		end_at = int(sys.argv[2])
 
-	csvh = open("data/heuristics.csv")
+	heuristics_path = "data/heuristics2.csv"
+	distances_path = "data/real-distances2.csv"
+
+	csvh = open(heuristics_path)
 	grid1 = list(csv.reader(csvh))
 	print(f"Hcsv:\n\t{grid1}")
 
-	csvd = open("data/real-distances.csv")
+	csvd = open(distances_path)
 	grid2 = list(csv.reader(csvd))
 	print(f"Dcsv:\n\t{grid2}")
 
-	graph = dict()
+	d = dict()
 	for i, row in enumerate(grid2):
-		graph[i+1] = dict()
+		d[i+1] = dict()
 		for j, col in enumerate(row):
 			if(col!='0.'):
-				graph[i+1][j+1] = float(col)
-	print(f"D:\n\t{graph}")
+				d[i+1][j+1] = float(col)
+	print(f"D:\n\t{d}")
 	heuristics = dict()
 	for i, row in enumerate(grid1):
 		heuristics[i+1] = dict()
@@ -99,8 +107,15 @@ def main(argv):
 				heuristics[i+1][j+1] = float(col)
 	print(f"H:\n\t{heuristics}")
 
-	path = solve(start_at, end_at, heuristics, graph)
-	print("bestpath:\n\t",path)
+	path = solve(start_at, end_at, heuristics, d)
+	if(path):
+		print("bestpath:\n\t",path)
+		print("cost:\n")
+		cost = 0
+		for i in range(0,len(path)-1):
+			cost += d[path[i]][path[i+1]]
+		print(f"\t{cost}")
+		
 
 if __name__ == "__main__":
     main(sys.argv)
