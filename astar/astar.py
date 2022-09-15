@@ -2,75 +2,69 @@ import csv
 import math
 import sys
 
+def build_path(node, previous):
+		path = [node]
+		while node in list(previous.keys()):
+			node = previous[node]
+			path.insert(0, node)
+		return path
+
 def solve(start, end, h, d):
 	if(start not in list(d.keys()) or end not in list(d.keys())):
 		print(f"Error: Start:{start} or End:{end} node doesn't exist in nodes:{list(d.keys())}")
 		return None
 
 	print(f"{start}->{end}")
-	visited = [] # closed list
-	schedule = [start] # open list
-	f = dict()
+	schedule = [start]
+	previous = dict()
 	g = dict()
-	f[start]=g[start]=0
-	f[end]=g[end]=0
+	f = dict()
 	for ele in [node for node in d.keys()]:
-		g[ele] = 0
+		g[ele] = math.inf
+		f[ele] = math.inf
+	g[start]=0
+	f[start]=h[start][end]
 	it = 0
 	while(len(schedule)!=0):
-	# for it in range(0,10):
 		print("IT ",it," --")
 		it+=1
-		# known.update(set(d[node].keys()))
-		# print(f"known:{known}")
 		print(f"f:{f}")
 		print(f"g:{g}")
-		node = schedule[0]
-		for evalf in schedule:
-			if f[evalf] < f[node]:
-				node = evalf 
-		schedule.remove(node)
-		visited.append(node)
-		print(f"node:{node}")
-		print(f"expan:{d[node]}")
-		print(f"visited:{visited}")
-
-		if(node == end):
-			print("end\nPATH:")
-			previousnode = end
-			backtrack = [previousnode]
-			while(previousnode != start):
-			# for i in range(0,5):
-				print("pn",previousnode)
-				for previous in d[previousnode]:
-					print("\tp",previous)
-					if previous in visited and not previous in backtrack:
-						previousnode = previous
-						backtrack.append(previousnode)
-						if(previousnode == start):
-							break
-						print("\tbt",backtrack)
-						continue
-			return backtrack[::-1]
-		
-		for evaln in d[node]:
-			print(f"evaln:{evaln}")
-			if evaln in visited:
-				continue
-			g[evaln] = g[node] + d[node][evaln]
-			f[evaln] = g[evaln]
-			if (evaln!=end):
-				estimative = h[evaln][end]
-				f[evaln] += estimative
-				print(f"\tf({evaln}) = {g[evaln]} g + {h[evaln][end]} h")
-			print(f"\tf({evaln}) = {f[evaln]}")
-			if True in [snode == evaln and g[evaln] > g[snode] for snode in schedule]:
-				continue
-			
-			schedule.append(evaln)
-
 		print(f"schedule:{schedule}")
+		
+		min_f = math.inf
+		min_node = None
+		print(f"min_node = min v")
+		for evalf in schedule:
+			print(f"\tf[{evalf}]:{f[evalf]}")
+			
+			if f[evalf] < min_f:
+				min_node = evalf 
+				min_f = f[evalf]
+			print(f"\t\tmin_node:{min_node}")
 
+		if(min_node==end):
+			return build_path(min_node,previous)
+		print(f"min_node:{min_node}")
+		schedule.remove(min_node)
+
+		for adj in list(d[min_node].keys()):
+			evalg = g[min_node] + d[min_node][adj]
+			print(f"\t\tv {evalg}:evalg = {g[min_node]}:g[{min_node}] + {d[min_node][adj]}:d[{min_node}][{adj}]")
+			print(f"\tadj:{adj} - {evalg}:evalg <comp> {g[adj]}:g[{adj}]")
+			if evalg < g[adj]:
+				previous[adj]=min_node
+				g[adj]=evalg
+				f[adj]=evalg + h[adj][end]
+				print(f"\t\tupdated - f[{adj}]:{f[adj]} = {h[adj][end]}:h[{adj}][{end}] + {g[adj]}g[{adj}]")
+
+				if adj not in schedule:
+					schedule.append(adj)
+
+		print(f"previous:{previous}")
+		print(f"new schedule:{schedule}")
+	print(f"Unreachable Nodes")
+	return None
 def main(argv):
 	if (len(argv)<3):
 		print("Usage: $astar [start] [end]")
@@ -81,8 +75,8 @@ def main(argv):
 	if (sys.argv[2]):
 		end_at = int(sys.argv[2])
 
-	heuristics_path = "data/heuristics2.csv"
-	distances_path = "data/real-distances2.csv"
+	heuristics_path = "data/heuristics.csv"
+	distances_path = "data/real-distances.csv"
 
 	csvh = open(heuristics_path)
 	grid1 = list(csv.reader(csvh))
@@ -103,8 +97,8 @@ def main(argv):
 	for i, row in enumerate(grid1):
 		heuristics[i+1] = dict()
 		for j, col in enumerate(row):
-			if(col!='0.'):
-				heuristics[i+1][j+1] = float(col)
+			#if(col!='0.'):
+			heuristics[i+1][j+1] = float(col)
 	print(f"H:\n\t{heuristics}")
 
 	path = solve(start_at, end_at, heuristics, d)
