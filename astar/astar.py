@@ -2,6 +2,14 @@ import csv
 import math
 import sys
 
+def print_pathcost(path, d):
+	print("bestpath:\n\t",path)
+	print("cost:\n")
+	cost = 0
+	for i in range(0,len(path)-1):
+		cost += d[path[i]][path[i+1]]
+	print(f"\t{cost}")
+		
 def build_path(node, previous):
 		path = [node]
 		while node in list(previous.keys()):
@@ -9,19 +17,26 @@ def build_path(node, previous):
 			path.insert(0, node)
 		return path
 
-def solve(start, end, h, d):
+def solve(start, end, h, d, d2=None):
+	if(d2):
+		d=d2
+		print(f"d2 instead")
 	if(start not in list(d.keys()) or end not in list(d.keys())):
 		print(f"Error: Start:{start} or End:{end} node doesn't exist in nodes:{list(d.keys())}")
 		return None
 
 	print(f"{start}->{end}")
+	expansions = list()
 	schedule = [start]
 	previous = dict()
 	g = dict()
 	f = dict()
-	for ele in [node for node in d.keys()]:
-		g[ele] = math.inf
-		f[ele] = math.inf
+	for node in list(d.keys()):
+		g[node] = math.inf
+		f[node] = math.inf
+
+	print("print fgh",f,g,h)
+
 	g[start]=0
 	f[start]=h[start][end]
 	it = 0
@@ -42,8 +57,14 @@ def solve(start, end, h, d):
 				min_node = evalf 
 				min_f = f[evalf]
 			print(f"\t\tmin_node:{min_node}")
+		expansions.append(min_node)
 
 		if(min_node==end):
+			print("f_costs:\n")
+			for node in list(f.keys()):
+				if (f[node]!=math.inf):
+					print(f"\tf({node})={f[node]}")
+			print("min_nodes:\n\t",expansions)
 			return build_path(min_node,previous)
 		print(f"min_node:{min_node}")
 		schedule.remove(min_node)
@@ -103,13 +124,7 @@ def main(argv):
 
 	path = solve(start_at, end_at, heuristics, d)
 	if(path):
-		print("bestpath:\n\t",path)
-		print("cost:\n")
-		cost = 0
-		for i in range(0,len(path)-1):
-			cost += d[path[i]][path[i+1]]
-		print(f"\t{cost}")
-		
+		print_pathcost(path,d)
 
 if __name__ == "__main__":
     main(sys.argv)
