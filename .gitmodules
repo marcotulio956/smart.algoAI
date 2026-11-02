@@ -4,3 +4,6 @@
 [submodule "meta.heuristicsTSP"]
 	path = meta.heuristicsTSP
 	url = https://github.com/marcotulio956/meta.heuristicsTSP.git
+[submodule "smart.pnrVLSI"]
+	path = smart.pnrVLSI
+	url = https://github.com/marcotulio956/smart.pnrVLSI.git
