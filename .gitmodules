@@ -1,9 +1,6 @@
-[submodule "MetaHeuristics-TSP"]
-	path = MetaHeuristics-TSP
-	url = https://github.com/marcotulio956/MetaHeuristics-TSP.git
-[submodule "symbolic_regression"]
-	path = symbolic_regression
+[submodule "symbolic.regressionGA"]
+	path = symbolic.regressionGA
 	url = https://github.com/marcotulio956/symbolic.regressionGA.git
-[submodule "meta.heuristics-TSP"]
-	path = meta.heuristics-TSP
-	url = https://github.com/marcotulio956/meta.heuristics-TSP.git
+[submodule "meta.heuristicsTSP"]
+	path = meta.heuristicsTSP
+	url = https://github.com/marcotulio956/meta.heuristicsTSP.git
